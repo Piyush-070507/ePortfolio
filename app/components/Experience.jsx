@@ -128,19 +128,19 @@ function ExperienceJourney() {
       if (!el) return;
       if (i === activeIndex) {
         gsap.to(el, {
-          opacity: 1,
+          autoAlpha: 1,
           y: 0,
           duration: 0.5,
           ease: "power2.out",
-          pointerEvents: "auto",
+          overwrite: "auto",
         });
       } else {
         gsap.to(el, {
-          opacity: 0,
+          autoAlpha: 0,
           y: i < activeIndex ? -24 : 24,
           duration: 0.35,
           ease: "power2.in",
-          pointerEvents: "none",
+          overwrite: "auto",
         });
       }
     });
@@ -148,23 +148,24 @@ function ExperienceJourney() {
     logoGridRefs.current.forEach((el, i) => {
       if (!el) return;
       if (i === activeIndex) {
-        gsap.to(el, { opacity: 1, duration: 0.5, ease: "power2.out" });
+        gsap.to(el, { autoAlpha: 1, duration: 0.5, ease: "power2.out", overwrite: "auto" });
         const logos = el.querySelectorAll(".logo-item");
         gsap.fromTo(
           logos,
-          { opacity: 0, scale: 0.92, y: 12 },
+          { autoAlpha: 0, scale: 0.92, y: 12 },
           {
-            opacity: 1,
+            autoAlpha: 1,
             scale: 1,
             y: 0,
             duration: 0.45,
             stagger: 0.06,
             ease: "power2.out",
             delay: 0.12,
+            overwrite: "auto"
           }
         );
       } else {
-        gsap.to(el, { opacity: 0, duration: 0.3, ease: "power2.in" });
+        gsap.to(el, { autoAlpha: 0, duration: 0.3, ease: "power2.in", overwrite: "auto" });
       }
     });
 
@@ -200,7 +201,7 @@ function ExperienceJourney() {
     <div
       ref={pinRef}
       className="w-full bg-white"
-      style={{ height: "100vh", overflow: "hidden" }}
+      style={{ height: "100svh", overflow: "hidden" }}
     >
       {/* Header */}
       <div className="w-full max-w-[1440px] mx-auto px-6 md:px-12 pt-16 pb-4 md:pt-20 md:pb-6">
@@ -261,7 +262,7 @@ function ExperienceJourney() {
                   className="absolute top-0 left-0 w-full h-full pt-2 md:pt-8 overflow-y-auto no-scrollbar pb-10"
                   style={{
                     opacity: i === 0 ? 1 : 0,
-                    pointerEvents: i === 0 ? "auto" : "none",
+                    visibility: i === 0 ? "visible" : "hidden",
                   }}
                 >
                   <span className="text-[10px] font-bold tracking-[0.35em] uppercase text-zinc-400 mb-3 block mt-2">
@@ -343,7 +344,10 @@ function ExperienceJourney() {
                     key={i}
                     ref={(el) => (logoGridRefs.current[i] = el)}
                     className="absolute top-0 left-0 w-full h-full flex items-start pt-4"
-                    style={{ opacity: i === 0 ? 1 : 0 }}
+                    style={{ 
+                      opacity: i === 0 ? 1 : 0,
+                      visibility: i === 0 ? "visible" : "hidden"
+                    }}
                   >
                     <div
                       className={`grid gap-4 w-full ${
