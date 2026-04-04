@@ -133,8 +133,11 @@ function ExperienceJourney() {
     { scope: pinRef }
   );
 
-  /* ── Animate on activeIndex change ── */
+  /* ── Animate on activeIndex change (desktop only) ── */
   useEffect(() => {
+    // Only run GSAP animations on desktop — mobile uses static CSS visibility
+    if (typeof window !== "undefined" && window.innerWidth < 1024) return;
+
     contentRefs.current.forEach((el, i) => {
       if (!el) return;
       if (i === activeIndex) {
