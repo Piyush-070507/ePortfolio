@@ -99,6 +99,8 @@ function ExperienceJourney() {
   useGSAP(
     () => {
       if (!pinRef.current) return;
+      // Do NOT run any GSAP/ScrollTrigger logic on mobile — causes crashes
+      if (typeof window !== "undefined" && window.innerWidth < 1024) return;
 
       const mm = gsap.matchMedia();
 
