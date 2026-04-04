@@ -21,7 +21,6 @@ const EXPERIENCES = [
       { src: "/Brands/CouncilCore/gelassimo.jpeg", alt: "Gelassimo" },
       { src: "/Brands/CouncilCore/insurrance.jpeg", alt: "Insurance Partner" },
       { src: "/Brands/CouncilCore/waffle.jpeg", alt: "Waffle Partner" },
-
     ],
   },
   {
@@ -84,11 +83,89 @@ const EXPERIENCES = [
 ];
 
 /* ─────────────────────────────────────────────
-   Pinned Journey Sub-Component
-   This is the part that gets pinned during scroll.
-   Skills lives OUTSIDE so it doesn't inflate pin height.
+   MOBILE EXPERIENCE — Pure static cards, zero GSAP
    ───────────────────────────────────────────── */
-function ExperienceJourney() {
+function MobileExperience() {
+  return (
+    <section className="w-full bg-white border-t border-zinc-100">
+      <div className="w-full max-w-[1440px] mx-auto px-6 py-16">
+        <span className="text-xs font-bold uppercase tracking-[0.3em] text-orange-500 mb-2 block">
+          Professional Journey
+        </span>
+        <h2 className="text-4xl font-black uppercase tracking-tighter text-black leading-[0.9] mb-10">
+          Experience
+        </h2>
+
+        <div className="flex flex-col gap-8">
+          {EXPERIENCES.map((exp, i) => (
+            <article key={i} className="border border-zinc-200 rounded-2xl p-5 bg-white shadow-sm">
+              <span className="text-[10px] font-bold tracking-[0.35em] uppercase text-zinc-400 mb-3 block">
+                Step {String(i + 1).padStart(2, "0")} / {String(EXPERIENCES.length).padStart(2, "0")}
+              </span>
+
+              {exp.orgLogo && (
+                <div className="mb-4 inline-block bg-white p-2 border border-zinc-200 rounded-xl">
+                  <Image
+                    src={exp.orgLogo}
+                    alt={exp.org}
+                    width={160}
+                    height={160}
+                    style={{ width: "auto", height: "auto" }}
+                    className="object-contain rounded-lg"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-orange-500 mb-3 block">
+                {exp.date}
+              </span>
+
+              <h3 className="text-2xl font-black text-black tracking-tight leading-[1.15] mb-2">
+                {exp.role}
+              </h3>
+
+              <p className="text-base font-semibold text-zinc-500 mb-4">{exp.org}</p>
+
+              <div className="w-10 h-[2px] bg-zinc-300 mb-4" />
+
+              <p className="text-sm font-medium text-zinc-600 leading-relaxed mb-6">
+                {exp.description}
+              </p>
+
+              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-400 mb-3 block">
+                Brand Partnerships
+              </span>
+              <div className="grid grid-cols-3 gap-3">
+                {exp.logos.map((logo, li) => (
+                  <div
+                    key={li}
+                    className="aspect-square bg-zinc-50 border border-zinc-200 rounded-lg flex items-center justify-center p-3"
+                  >
+                    <Image
+                      src={logo.src}
+                      alt={logo.alt}
+                      width={80}
+                      height={80}
+                      style={{ width: "auto", height: "auto" }}
+                      className="object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   DESKTOP EXPERIENCE — Full GSAP pinning (never mounts on mobile)
+   ───────────────────────────────────────────── */
+function DesktopExperience() {
   const pinRef = useRef(null);
   const progressRef = useRef(null);
   const contentRefs = useRef([]);
@@ -99,8 +176,6 @@ function ExperienceJourney() {
   useGSAP(
     () => {
       if (!pinRef.current) return;
-      // Do NOT run any GSAP/ScrollTrigger logic on mobile — causes crashes
-      if (typeof window !== "undefined" && window.innerWidth < 1024) return;
 
       const mm = gsap.matchMedia();
 
@@ -110,7 +185,6 @@ function ExperienceJourney() {
         ScrollTrigger.create({
           trigger: pinRef.current,
           start: "top top",
-          /* each step gets a full viewport of scroll distance */
           end: () => `+=${window.innerHeight * totalSteps}`,
           pin: true,
           pinSpacing: true,
@@ -135,21 +209,12 @@ function ExperienceJourney() {
     { scope: pinRef }
   );
 
-  /* ── Animate on activeIndex change (desktop only) ── */
+  /* ── Animate on activeIndex change ── */
   useEffect(() => {
-    // Only run GSAP animations on desktop — mobile uses static CSS visibility
-    if (typeof window !== "undefined" && window.innerWidth < 1024) return;
-
     contentRefs.current.forEach((el, i) => {
       if (!el) return;
       if (i === activeIndex) {
-        gsap.to(el, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.5,
-          ease: "power2.out",
-          overwrite: "auto",
-        });
+        gsap.to(el, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out", overwrite: "auto" });
       } else {
         gsap.to(el, {
           autoAlpha: 0,
@@ -170,14 +235,8 @@ function ExperienceJourney() {
           logos,
           { autoAlpha: 0, scale: 0.92, y: 12 },
           {
-            autoAlpha: 1,
-            scale: 1,
-            y: 0,
-            duration: 0.45,
-            stagger: 0.06,
-            ease: "power2.out",
-            delay: 0.12,
-            overwrite: "auto"
+            autoAlpha: 1, scale: 1, y: 0,
+            duration: 0.45, stagger: 0.06, ease: "power2.out", delay: 0.12, overwrite: "auto",
           }
         );
       } else {
@@ -188,111 +247,19 @@ function ExperienceJourney() {
     dotRefs.current.forEach((el, i) => {
       if (!el) return;
       if (i === activeIndex) {
-        gsap.to(el, {
-          scale: 1.6,
-          backgroundColor: "#ea580c",
-          borderColor: "#ea580c",
-          duration: 0.35,
-          ease: "power2.out",
-        });
+        gsap.to(el, { scale: 1.6, backgroundColor: "#ea580c", borderColor: "#ea580c", duration: 0.35, ease: "power2.out" });
       } else if (i < activeIndex) {
-        gsap.to(el, {
-          scale: 1,
-          backgroundColor: "#000",
-          borderColor: "#000",
-          duration: 0.3,
-        });
+        gsap.to(el, { scale: 1, backgroundColor: "#000", borderColor: "#000", duration: 0.3 });
       } else {
-        gsap.to(el, {
-          scale: 1,
-          backgroundColor: "#fff",
-          borderColor: "#d4d4d8",
-          duration: 0.3,
-        });
+        gsap.to(el, { scale: 1, backgroundColor: "#fff", borderColor: "#d4d4d8", duration: 0.3 });
       }
     });
   }, [activeIndex]);
 
   return (
-    <>
-      <section className="lg:hidden w-full bg-white border-t border-zinc-100">
-        <div className="w-full max-w-[1440px] mx-auto px-6 py-16">
-          <span className="text-xs font-bold uppercase tracking-[0.3em] text-orange-500 mb-2 block">
-            Professional Journey
-          </span>
-          <h2 className="text-4xl font-black uppercase tracking-tighter text-black leading-[0.9] mb-10">
-            Experience
-          </h2>
-
-          <div className="flex flex-col gap-8">
-            {EXPERIENCES.map((exp, i) => (
-              <article key={i} className="border border-zinc-200 rounded-2xl p-5 bg-white shadow-sm">
-                <span className="text-[10px] font-bold tracking-[0.35em] uppercase text-zinc-400 mb-3 block">
-                  Step {String(i + 1).padStart(2, "0")} / {String(EXPERIENCES.length).padStart(2, "0")}
-                </span>
-
-                {exp.orgLogo && (
-                  <div className="mb-4 inline-block bg-white p-2 border border-zinc-200 rounded-xl">
-                    <Image
-                      src={exp.orgLogo}
-                      alt={exp.org}
-                      width={160}
-                      height={160}
-                      style={{ width: "auto", height: "auto" }}
-                      className="object-contain rounded-lg"
-                      loading="lazy"
-                    />
-                  </div>
-                )}
-
-                <span className="text-xs font-bold uppercase tracking-[0.25em] text-orange-500 mb-3 block">
-                  {exp.date}
-                </span>
-
-                <h3 className="text-2xl font-black text-black tracking-tight leading-[1.15] mb-2">
-                  {exp.role}
-                </h3>
-
-                <p className="text-base font-semibold text-zinc-500 mb-4">
-                  {exp.org}
-                </p>
-
-                <div className="w-10 h-[2px] bg-zinc-300 mb-4" />
-
-                <p className="text-sm font-medium text-zinc-600 leading-relaxed mb-6">
-                  {exp.description}
-                </p>
-
-                <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-400 mb-3 block">
-                  Brand Partnerships
-                </span>
-                <div className="grid grid-cols-3 gap-3">
-                  {exp.logos.map((logo, li) => (
-                    <div
-                      key={li}
-                      className="aspect-square bg-zinc-50 border border-zinc-200 rounded-lg flex items-center justify-center p-3"
-                    >
-                      <Image
-                        src={logo.src}
-                        alt={logo.alt}
-                        width={80}
-                        height={80}
-                        style={{ width: "auto", height: "auto" }}
-                        className="object-contain"
-                        loading="lazy"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div
+    <div
       ref={pinRef}
-      className="hidden lg:block w-full bg-white"
+      className="w-full bg-white"
       style={{ height: "100svh", overflow: "hidden" }}
     >
       {/* Header */}
@@ -312,9 +279,7 @@ function ExperienceJourney() {
           {/* LEFT: Timeline + Role Content */}
           <div className="lg:col-span-5 relative flex h-full">
             {/* Timeline track */}
-            <div className="hidden lg:flex flex-col items-center mr-10 relative py-4"
-              style={{ height: "100%" }}
-            >
+            <div className="flex flex-col items-center mr-10 relative py-4" style={{ height: "100%" }}>
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-full bg-zinc-200" />
               <div
                 ref={progressRef}
@@ -331,20 +296,6 @@ function ExperienceJourney() {
               ))}
             </div>
 
-            {/* Mobile step indicator */}
-            <div className="lg:hidden flex gap-2 mb-4">
-              {EXPERIENCES.map((_, i) => (
-                <div
-                  key={i}
-                  className="h-1 flex-1 rounded-full transition-colors duration-300"
-                  style={{
-                    backgroundColor:
-                      i <= activeIndex ? "#ea580c" : "#e4e4e7",
-                  }}
-                />
-              ))}
-            </div>
-
             {/* Role cards stacked */}
             <div className="relative flex-1 w-full h-full">
               {EXPERIENCES.map((exp, i) => (
@@ -352,10 +303,7 @@ function ExperienceJourney() {
                   key={i}
                   ref={(el) => (contentRefs.current[i] = el)}
                   className="absolute top-0 left-0 w-full h-full pt-2 md:pt-8 overflow-y-auto no-scrollbar pb-10"
-                  style={{
-                    opacity: i === 0 ? 1 : 0,
-                    visibility: i === 0 ? "visible" : "hidden",
-                  }}
+                  style={{ opacity: i === 0 ? 1 : 0, visibility: i === 0 ? "visible" : "hidden" }}
                 >
                   <span className="text-[10px] font-bold tracking-[0.35em] uppercase text-zinc-400 mb-3 block mt-2">
                     Step {String(i + 1).padStart(2, "0")} /{" "}
@@ -384,49 +332,20 @@ function ExperienceJourney() {
                     {exp.role}
                   </h3>
 
-                  <p className="text-lg md:text-xl font-semibold text-zinc-500 mb-5">
-                    {exp.org}
-                  </p>
+                  <p className="text-lg md:text-xl font-semibold text-zinc-500 mb-5">{exp.org}</p>
 
                   <div className="w-12 h-[2px] bg-zinc-300 mb-5" />
 
                   <p className="text-base md:text-lg font-medium text-zinc-600 leading-relaxed max-w-md">
                     {exp.description}
                   </p>
-
-                 
-
-                  {/* Mobile logo grid */}
-                  <div className="lg:hidden mt-8">
-                    <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-400 mb-4 block">
-                      Brand Partnerships
-                    </span>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                      {exp.logos.map((logo, li) => (
-                        <div
-                          key={li}
-                          className="aspect-square bg-zinc-50 border border-zinc-200 rounded-lg flex items-center justify-center p-3 hover:border-orange-500 transition-colors"
-                        >
-                          <Image
-                            src={logo.src}
-                            alt={logo.alt}
-                            width={80}
-                            height={80}
-                            style={{ width: "auto", height: "auto" }}
-                            className="object-contain  hover:grayscale-0 transition-all duration-300 hover:scale-105"
-                            loading="lazy"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* RIGHT: Logo Display */}
-          <div className="hidden lg:flex lg:col-span-7 items-center justify-center relative pl-12">
+          <div className="lg:col-span-7 flex items-center justify-center relative pl-12">
             <div className="w-full relative">
               <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-400 mb-6 block">
                 Brand Partnerships
@@ -438,16 +357,11 @@ function ExperienceJourney() {
                     key={i}
                     ref={(el) => (logoGridRefs.current[i] = el)}
                     className="absolute top-0 left-0 w-full h-full flex items-start pt-4"
-                    style={{ 
-                      opacity: i === 0 ? 1 : 0,
-                      visibility: i === 0 ? "visible" : "hidden"
-                    }}
+                    style={{ opacity: i === 0 ? 1 : 0, visibility: i === 0 ? "visible" : "hidden" }}
                   >
                     <div
                       className={`grid gap-4 w-full ${
-                        exp.logos.length <= 4
-                          ? "grid-cols-2 md:grid-cols-4"
-                          : "grid-cols-3 md:grid-cols-4"
+                        exp.logos.length <= 4 ? "grid-cols-2 md:grid-cols-4" : "grid-cols-3 md:grid-cols-4"
                       }`}
                     >
                       {exp.logos.map((logo, li) => (
@@ -475,7 +389,6 @@ function ExperienceJourney() {
         </div>
       </div>
     </div>
-    </>
   );
 }
 
@@ -506,7 +419,7 @@ function Skills() {
           Toolkit
         </span>
         <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-black mb-12">
-          Skills & Tech
+          Skills &amp; Tech
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -516,16 +429,14 @@ function Skills() {
               Languages
             </h3>
             <div className="flex flex-wrap gap-2.5">
-              {["Python", "Java", "C", "HTML", "CSS", "JavaScript"].map(
-                (skill) => (
-                  <span
-                    key={skill}
-                    className="bg-black text-white px-4 py-2 rounded-md font-bold text-sm tracking-wide hover:bg-orange-500 transition-colors cursor-default"
-                  >
-                    {skill}
-                  </span>
-                )
-              )}
+              {["Python", "Java", "C", "HTML", "CSS", "JavaScript"].map((skill) => (
+                <span
+                  key={skill}
+                  className="bg-black text-white px-4 py-2 rounded-md font-bold text-sm tracking-wide hover:bg-orange-500 transition-colors cursor-default"
+                >
+                  {skill}
+                </span>
+              ))}
             </div>
           </div>
 
@@ -584,12 +495,27 @@ function Skills() {
 }
 
 /* ─────────────────────────────────────────────
-   Main Export — Journey (pinned) + Skills (normal)
+   Main Export — Conditional render based on actual screen size.
+   DesktopExperience with GSAP NEVER mounts on mobile.
    ───────────────────────────────────────────── */
 export default function Experience() {
+  const [isDesktop, setIsDesktop] = useState(null); // null = not yet determined (SSR)
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    setIsDesktop(mq.matches);
+
+    const handler = (e) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // During SSR / before hydration — render nothing to avoid mismatch
+  if (isDesktop === null) return null;
+
   return (
     <>
-      <ExperienceJourney />
+      {isDesktop ? <DesktopExperience /> : <MobileExperience />}
       <Skills />
     </>
   );
