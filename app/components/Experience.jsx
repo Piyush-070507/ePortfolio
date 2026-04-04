@@ -21,6 +21,7 @@ const EXPERIENCES = [
       { src: "/Brands/CouncilCore/gelassimo.jpeg", alt: "Gelassimo" },
       { src: "/Brands/CouncilCore/insurrance.jpeg", alt: "Insurance Partner" },
       { src: "/Brands/CouncilCore/waffle.jpeg", alt: "Waffle Partner" },
+
     ],
   },
   {
@@ -62,7 +63,7 @@ const EXPERIENCES = [
     orgLogo: "/Brands/U25/U25Logo.jpeg",
     description:
       "Engineered comprehensive sponsorship and brand experience strategies for one of India's most prominent youth festivals, enhancing overall market presence.",
-    logos: [{ src: "/u25.jpeg", alt: "Under25 Summit" }],
+    logos: [{ src: "/Brands/U25/U25Logo.jpeg", alt: "Under25 Summit" }],
   },
   {
     date: "March 2026",
@@ -97,27 +98,37 @@ function ExperienceJourney() {
 
   useGSAP(
     () => {
-      const totalSteps = EXPERIENCES.length;
+      if (!pinRef.current) return;
 
-      ScrollTrigger.create({
-        trigger: pinRef.current,
-        start: "top top",
-        /* each step gets a full viewport of scroll distance */
-        end: () => `+=${window.innerHeight * totalSteps}`,
-        pin: true,
-        pinSpacing: true,
-        scrub: 0.5,
-        anticipatePin: 1,
-        onUpdate: (self) => {
-          const raw = self.progress * totalSteps;
-          const idx = Math.min(Math.floor(raw), totalSteps - 1);
-          setActiveIndex(idx);
+      const mm = gsap.matchMedia();
 
-          if (progressRef.current) {
-            gsap.set(progressRef.current, { scaleY: self.progress });
-          }
-        },
+      mm.add("(min-width: 1024px)", () => {
+        const totalSteps = EXPERIENCES.length;
+
+        ScrollTrigger.create({
+          trigger: pinRef.current,
+          start: "top top",
+          /* each step gets a full viewport of scroll distance */
+          end: () => `+=${window.innerHeight * totalSteps}`,
+          pin: true,
+          pinSpacing: true,
+          scrub: 0.5,
+          anticipatePin: 1,
+          onUpdate: (self) => {
+            const raw = self.progress * totalSteps;
+            const idx = Math.min(Math.floor(raw), totalSteps - 1);
+            setActiveIndex(idx);
+
+            if (progressRef.current) {
+              gsap.set(progressRef.current, { scaleY: self.progress });
+            }
+          },
+        });
       });
+
+      return () => {
+        mm.revert();
+      };
     },
     { scope: pinRef }
   );
@@ -198,9 +209,83 @@ function ExperienceJourney() {
   }, [activeIndex]);
 
   return (
-    <div
+    <>
+      <section className="lg:hidden w-full bg-white border-t border-zinc-100">
+        <div className="w-full max-w-[1440px] mx-auto px-6 py-16">
+          <span className="text-xs font-bold uppercase tracking-[0.3em] text-orange-500 mb-2 block">
+            Professional Journey
+          </span>
+          <h2 className="text-4xl font-black uppercase tracking-tighter text-black leading-[0.9] mb-10">
+            Experience
+          </h2>
+
+          <div className="flex flex-col gap-8">
+            {EXPERIENCES.map((exp, i) => (
+              <article key={i} className="border border-zinc-200 rounded-2xl p-5 bg-white shadow-sm">
+                <span className="text-[10px] font-bold tracking-[0.35em] uppercase text-zinc-400 mb-3 block">
+                  Step {String(i + 1).padStart(2, "0")} / {String(EXPERIENCES.length).padStart(2, "0")}
+                </span>
+
+                {exp.orgLogo && (
+                  <div className="mb-4 inline-block bg-white p-2 border border-zinc-200 rounded-xl">
+                    <Image
+                      src={exp.orgLogo}
+                      alt={exp.org}
+                      width={160}
+                      height={160}
+                      className="object-contain rounded-lg"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+
+                <span className="text-xs font-bold uppercase tracking-[0.25em] text-orange-500 mb-3 block">
+                  {exp.date}
+                </span>
+
+                <h3 className="text-2xl font-black text-black tracking-tight leading-[1.15] mb-2">
+                  {exp.role}
+                </h3>
+
+                <p className="text-base font-semibold text-zinc-500 mb-4">
+                  {exp.org}
+                </p>
+
+                <div className="w-10 h-[2px] bg-zinc-300 mb-4" />
+
+                <p className="text-sm font-medium text-zinc-600 leading-relaxed mb-6">
+                  {exp.description}
+                </p>
+
+                <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-400 mb-3 block">
+                  Brand Partnerships
+                </span>
+                <div className="grid grid-cols-3 gap-3">
+                  {exp.logos.map((logo, li) => (
+                    <div
+                      key={li}
+                      className="aspect-square bg-zinc-50 border border-zinc-200 rounded-lg flex items-center justify-center p-3"
+                    >
+                      <Image
+                        src={logo.src}
+                        alt={logo.alt}
+                        width={80}
+                        height={80}
+                        className="object-contain"
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div
       ref={pinRef}
-      className="w-full bg-white"
+      className="hidden lg:block w-full bg-white"
       style={{ height: "100svh", overflow: "hidden" }}
     >
       {/* Header */}
@@ -380,6 +465,7 @@ function ExperienceJourney() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

@@ -20,7 +20,7 @@ export default function Navbar() {
   return (
       <nav ref={navRef} className="w-full px-6 md:px-12 py-6 flex justify-between items-center border-b-4 border-black bg-white z-20">
         <div className="font-black text-2xl tracking-tighter uppercase relative">
-          Piyush<span className="text-orange-500">.</span>
+          Piyush<span className="text-orange-500">07</span>
         </div>
         <div className="gap-8 font-bold text-sm tracking-widest uppercase hidden md:flex">
           <a href="#about" className="hover:text-orange-500 hover:-translate-y-0.5 transition-all">About</a>
