@@ -7,6 +7,7 @@ gsap.registerPlugin(useGSAP);
 
 export default function Navbar() {
   const navRef = useRef(null);
+  const audioRef = useRef(null);
 
   useGSAP(() => {
     gsap.from(navRef.current, {
@@ -17,9 +18,24 @@ export default function Navbar() {
     });
   });
 
+  const handleLogoClick = () => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio("/OnTop.mp3");
+    }
+    
+    if (audioRef.current.paused) {
+      audioRef.current.play();
+    } else {
+      audioRef.current.pause();
+    }
+  };
+
   return (
       <nav ref={navRef} className="w-full px-6 md:px-12 py-6 flex justify-between items-center border-b-4 border-black bg-white z-20">
-        <div className="font-black text-2xl tracking-tighter uppercase relative">
+        <div 
+          onClick={handleLogoClick} 
+          className="font-black text-2xl tracking-tighter uppercase relative cursor-pointer hover:scale-105 transition-transform"
+        >
           Piyush<span className="text-orange-500">07</span>
         </div>
         <div className="gap-8 font-bold text-sm tracking-widest uppercase hidden md:flex">

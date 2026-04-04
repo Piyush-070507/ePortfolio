@@ -233,6 +233,7 @@ function ExperienceJourney() {
                       alt={exp.org}
                       width={160}
                       height={160}
+                      style={{ width: "auto", height: "auto" }}
                       className="object-contain rounded-lg"
                       loading="lazy"
                     />
@@ -271,6 +272,7 @@ function ExperienceJourney() {
                         alt={logo.alt}
                         width={80}
                         height={80}
+                        style={{ width: "auto", height: "auto" }}
                         className="object-contain"
                         loading="lazy"
                       />
@@ -362,6 +364,7 @@ function ExperienceJourney() {
                         alt={exp.org}
                         width={180}
                         height={180}
+                        style={{ width: "auto", height: "auto" }}
                         className="object-contain rounded-lg"
                         loading="lazy"
                       />
@@ -404,6 +407,7 @@ function ExperienceJourney() {
                             alt={logo.alt}
                             width={80}
                             height={80}
+                            style={{ width: "auto", height: "auto" }}
                             className="object-contain  hover:grayscale-0 transition-all duration-300 hover:scale-105"
                             loading="lazy"
                           />
@@ -451,6 +455,7 @@ function ExperienceJourney() {
                             alt={logo.alt}
                             width={120}
                             height={120}
+                            style={{ width: "auto", height: "auto" }}
                             className="object-contain w-full h-full group-hover:scale-105 transition-all duration-300"
                             loading="lazy"
                           />

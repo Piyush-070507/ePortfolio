@@ -1,13 +1,16 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { submitContact } from "../actions/contact";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function Contact() {
   const containerRef = useRef(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState(null);
 
   useGSAP(() => {
     gsap.from(containerRef.current, {
@@ -22,6 +25,14 @@ export default function Contact() {
       }
     });
   });
+
+  async function handleAction(formData) {
+    setIsSubmitting(true);
+    setStatus(null);
+    const result = await submitContact(formData);
+    setStatus(result);
+    setIsSubmitting(false);
+  }
 
   return (
       <section ref={containerRef} className="w-full max-w-[1440px] mx-auto px-6 md:px-12 py-20 lg:py-32 bg-white relative z-10 border-t-4 border-black">
@@ -83,8 +94,14 @@ export default function Contact() {
              {/* Offset highlight block */}
             <div className="absolute inset-0 bg-orange-500 border-4 border-black translate-x-3 translate-y-3 md:translate-x-5 md:translate-y-5 rounded-2xl z-0 transition-transform hover:translate-x-6 hover:translate-y-6"></div>
             
-            <form className="relative bg-white border-4 border-black p-8 md:p-10 rounded-2xl z-10 shadow-[6px_6px_0_#000] flex flex-col gap-8">
+            <form action={handleAction} suppressHydrationWarning className="relative bg-white border-4 border-black p-8 md:p-10 rounded-2xl z-10 shadow-[6px_6px_0_#000] flex flex-col gap-8">
               
+              {status && (
+                <div className={`p-4 font-bold border-2 border-black ${status.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  {status.message}
+                </div>
+              )}
+
               <div className="absolute -top-4 -right-4 bg-black text-white font-black px-4 py-1 uppercase text-sm rotate-6 shadow-[2px_2px_0_#ea580c]">
                 Let's Talk
               </div>
@@ -92,6 +109,7 @@ export default function Contact() {
               <div className="relative z-0">
                 <input 
                   type="text" 
+                  name="name"
                   id="name" 
                   placeholder=" " 
                   className="block w-full px-0 py-3 text-lg font-bold text-black bg-transparent border-0 border-b-4 border-black appearance-none focus:outline-none focus:ring-0 focus:border-orange-500 peer transition-colors"
@@ -108,6 +126,7 @@ export default function Contact() {
               <div className="relative z-0">
                 <input 
                   type="email" 
+                  name="email"
                   id="email" 
                   placeholder=" " 
                   className="block w-full px-0 py-3 text-lg font-bold text-black bg-transparent border-0 border-b-4 border-black appearance-none focus:outline-none focus:ring-0 focus:border-orange-500 peer transition-colors"
@@ -123,6 +142,7 @@ export default function Contact() {
 
               <div className="relative z-0">
                 <textarea 
+                  name="message"
                   id="message" 
                   rows="4"
                   placeholder=" " 
@@ -139,9 +159,10 @@ export default function Contact() {
 
               <button 
                 type="submit" 
-                className="mt-4 w-full bg-black text-white py-4 font-black text-xl uppercase tracking-widest border-4 border-black hover:bg-orange-500 hover:text-black hover:-translate-y-1 hover:shadow-[4px_4px_0_#000] transition-all"
+                disabled={isSubmitting}
+                className="mt-4 w-full bg-black text-white py-4 font-black text-xl uppercase tracking-widest border-4 border-black hover:bg-orange-500 hover:text-black hover:-translate-y-1 hover:shadow-[4px_4px_0_#000] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Send Message
+                {isSubmitting ? "Sending..." : "Send Message"}
               </button>
             </form>
 
