@@ -68,7 +68,7 @@ const EXPERIENCES = [
     date: "March 2026",
     role: "TEDx Sponsorship Lead",
     org: "TEDxVIT",
-    orgLogo: "/Brands/Tedx/TEDxVITlogo.png",
+    orgLogo: "/Brands/Tedx/TEDxVITlogo.jpeg",
     description:
       "Orchestrated premium brand collaborations for TEDxVIT, negotiating marketing deliverables and ensuring robust sponsor visibility aligned with global TEDx standards.",
     logos: [

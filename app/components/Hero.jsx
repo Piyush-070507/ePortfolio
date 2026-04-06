@@ -117,8 +117,8 @@ export default function Hero() {
             <a href="#projects" className="bg-black text-white px-8 py-4 font-black uppercase text-sm border-4 border-black hover:bg-orange-500 hover:text-black hover:-translate-y-1 hover:shadow-[6px_6px_0_#000] transition-all shadow-[4px_4px_0_#ea580c] text-center inline-block">
               View Projects
             </a>
-            <a href="#about" className="bg-white text-black px-8 py-4 font-black uppercase text-sm border-4 border-black hover:bg-black hover:text-white transition-all text-center inline-block">
-              Read My Story
+            <a href="/resume.pdf" className="bg-white text-black px-8 py-4 font-black uppercase text-sm border-4 border-black hover:bg-black hover:text-white transition-all text-center inline-block">
+              Download Resume
             </a>
           </div>
         </div>
